@@ -22,7 +22,9 @@
             activeTab: 'weekend',
             isLoading: true,
             events: [],
-            apiEndpoint: 'YOUR_DEPLOYED_APPS_SCRIPT_URL_HERE',
+            apiEndpoint: 'https://script.google.com/macros/s/AKfycbziBiOAPM6HDx7QZhJDuOQpu6FG4ZjbiWaj2AA-V5efsq_sgWPK41rPVCvjVdSnHE8X2g/exec
+
+',
             init() { fetch(this.apiEndpoint).then(r => r.json()).then(d => { this.events = d; this.isLoading = false; }); },
             shareEvent(e) { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`📍 *${e.title}*\n🗓️ ${e.date} | ${e.time}\n🏢 ${e.venue}\n\n👉 https://vyetasolutions.github.io/`)}`, '_blank'); }
         }"
