@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#030303] text-gray-100 antialiased h-[100dvh]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>WhatsHappenin // The Weekend, Curated</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        html, body { height: 100dvh; overflow: hidden; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .glass-sticky { background: rgba(5, 5, 5, 0.93); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        .glass-card { background: rgba(18, 18, 18, 0.7); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .text-gradient { background: linear-gradient(135deg, #34d399 0%, #059669 100%); -webkit-bg-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
+</head>
+<body class="flex justify-center items-start bg-[#030303]">
+
+    <main 
+        x-data="{ 
+            activeTab: 'weekend',
+            isLoading: true,
+            events: [],
+            apiEndpoint: 'YOUR_DEPLOYED_APPS_SCRIPT_URL_HERE',
+            init() { fetch(this.apiEndpoint).then(r => r.json()).then(d => { this.events = d; this.isLoading = false; }); },
+            shareEvent(e) { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`📍 *${e.title}*\n🗓️ ${e.date} | ${e.time}\n🏢 ${e.venue}\n\n👉 https://vyetasolutions.github.io/`)}`, '_blank'); }
+        }"
+        class="w-full max-w-md h-[100dvh] bg-[#070707] flex flex-col overflow-hidden"
+    >
+        
+        <div class="px-6 pt-12 pb-4 glass-sticky z-40">
+            <h1 class="text-2xl font-extrabold text-white">WhatsHappenin<span class="text-gradient font-black">.</span></h1>
+            <p class="text-[9px] uppercase font-bold tracking-widest text-gray-500">The Weekend, Curated</p>
+        </div>
+
+        <div class="flex-grow overflow-y-auto no-scrollbar px-6 pt-4 pb-32">
+            <div x-show="activeTab === 'weekend'" class="space-y-4">
+                <template x-for="event in events.filter(e => e.type === 'weekend')" :key="event.id">
+                    <div class="rounded-[32px] bg-zinc-900 border border-white/[0.06] p-4 space-y-3">
+                        <span class="text-[10px] font-bold text-emerald-400 uppercase" x-text="(event.date || '') + ' | ' + (event.time || '')"></span>
+                        <h3 class="text-sm font-bold text-white" x-text="event.title"></h3>
+                        <button @click="shareEvent(event)" class="w-full py-2 rounded-xl bg-white text-black text-[10px] font-bold uppercase">Share with Crew</button>
+                    </div>
+                </template>
+            </div>
+            
+            <div x-show="activeTab === 'weekday'" class="space-y-3">
+                <template x-for="event in events.filter(e => e.type === 'weekday')" :key="event.id">
+                    <div class="glass-card rounded-2xl p-4">
+                        <h3 class="text-sm font-bold text-white" x-text="event.title"></h3>
+                        <span class="text-emerald-400 text-[10px] uppercase font-bold" x-text="(event.date || '') + ' | ' + (event.time || '')"></span>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <nav class="absolute bottom-0 w-full p-4 flex justify-center">
+            <div class="glass-card w-full max-w-sm rounded-2xl px-6 py-3.5 flex justify-around items-center border border-white/[0.07]">
+                <button @click="activeTab = 'weekend'" class="text-emerald-400 text-[10px] font-bold uppercase">Weekend</button>
+                <button @click="activeTab = 'weekday'" class="text-gray-500 text-[10px] font-bold uppercase">Weekdays</button>
+            </div>
+        </nav>
+    </main>
+
+    <script>
+        function renderIcons() { if (window.lucide) window.lucide.createIcons(); }
+        document.addEventListener('alpine:initialized', renderIcons);
+    </script>
+</body>
+</html>
