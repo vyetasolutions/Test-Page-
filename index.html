@@ -1,73 +1,906 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-[#030303] text-gray-100 antialiased h-[100dvh]">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>WhatsHappenin // The Weekend, Curated</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        html, body { height: 100dvh; overflow: hidden; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .glass-sticky { background: rgba(5, 5, 5, 0.93); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
-        .glass-card { background: rgba(18, 18, 18, 0.7); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .text-gradient { background: linear-gradient(135deg, #34d399 0%, #059669 100%); -webkit-bg-clip: text; -webkit-text-fill-color: transparent; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vyeta | Corporate IT Retainers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #03030a;
+      --surface:   #080812;
+      --surface-2: #0d0d1a;
+      --border:    rgba(255,255,255,0.07);
+      --border-hi: rgba(255,255,255,0.14);
+      --text:      #f0f0f5;
+      --muted:     #6b7280;
+      --muted-hi:  #9ca3af;
+      --blue:      #2563eb;
+      --blue-light:#3b82f6;
+      --purple:    #7c3aed;
+      --purple-light:#a78bfa;
+      --cyan:      #06b6d4;
+      --green:     #10b981;
+      --magenta:   #db2777;
+      --font-display: 'Bricolage Grotesque', sans-serif;
+      --font-body:    'IBM Plex Sans', sans-serif;
+      --radius:    14px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; background: var(--bg); }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+    }
+
+    /* ─── PARALLAX BACKGROUND ─── */
+    .bg-stage {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
+    }
+    .bg-grid {
+      position: absolute; top: -20%; left: -50%; width: 200%; height: 200%;
+      background-image:
+        linear-gradient(rgba(99,102,241,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,102,241,0.035) 1px, transparent 1px);
+      background-size: 60px 60px;
+      transform: rotateX(75deg);
+      transform-origin: center top;
+      will-change: transform;
+    }
+    .bg-orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(130px); mix-blend-mode: screen; will-change: transform;
+    }
+    .orb-a { width: 560px; height: 560px; background: radial-gradient(var(--blue), transparent); top: 5%; left: -8%; opacity: 0.12; }
+    .orb-b { width: 640px; height: 640px; background: radial-gradient(var(--purple), transparent); top: 45%; right: -12%; opacity: 0.10; }
+    .orb-c { width: 420px; height: 420px; background: radial-gradient(var(--cyan), transparent); bottom: 0; left: 25%; opacity: 0.08; }
+
+    /* ─── FOREGROUND ─── */
+    .fg { position: relative; z-index: 10; }
+
+    /* ─── NAVBAR ─── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(3,3,10,0.72);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      padding: 0 28px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--font-display); font-size: 1.4rem; font-weight: 700;
+      color: var(--text); text-decoration: none; letter-spacing: -0.02em;
+    }
+    .logo-icon { width: 26px; height: 26px; flex-shrink: 0; }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-link {
+      color: var(--muted-hi); text-decoration: none; font-size: 0.875rem; font-weight: 500;
+      padding: 8px 14px; border-radius: 8px; transition: color 0.15s, background 0.15s;
+    }
+    .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+    .nav-cta {
+      background: var(--text); color: var(--bg);
+      padding: 9px 20px; border-radius: 8px;
+      font-size: 0.875rem; font-weight: 600;
+      border: none; cursor: pointer; transition: opacity 0.15s, transform 0.15s;
+      font-family: var(--font-body);
+    }
+    .nav-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding: 160px 28px 100px;
+      text-align: center;
+      max-width: 900px; margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(99,102,241,0.08);
+      border: 1px solid rgba(99,102,241,0.22);
+      padding: 6px 16px; border-radius: 99px;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em;
+      color: var(--purple-light); text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--purple-light); position: relative; }
+    .badge-dot::after {
+      content: ''; position: absolute; inset: 0; border-radius: 50%;
+      background: var(--purple-light); animation: ping 2s cubic-bezier(0,0,0.2,1) infinite;
+    }
+    @keyframes ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 6vw, 4.4rem);
+      font-weight: 800; letter-spacing: -0.045em;
+      line-height: 1.1; margin-bottom: 24px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(100deg, #93c5fd 0%, #c084fc 45%, #67e8f9 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: shimmer 5s linear infinite;
+    }
+    @keyframes shimmer { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
+    .hero-sub {
+      color: var(--muted-hi); font-size: 1.15rem; font-weight: 400;
+      max-width: 600px; margin: 0 auto 40px; line-height: 1.65;
+    }
+    .hero-actions { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .btn-solid {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #fff; padding: 14px 32px; border-radius: 10px;
+      font-size: 0.95rem; font-weight: 600; border: none; cursor: pointer;
+      font-family: var(--font-body); text-decoration: none;
+      box-shadow: 0 4px 24px rgba(99,102,241,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-solid:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(99,102,241,0.45); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.04);
+      color: var(--text); padding: 14px 28px; border-radius: 10px;
+      font-size: 0.95rem; font-weight: 500; border: 1px solid var(--border-hi);
+      cursor: pointer; font-family: var(--font-body); text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.25); }
+
+    /* ─── STATS STRIP ─── */
+    .stats-strip {
+      max-width: 1120px; margin: 0 auto;
+      padding: 0 28px 80px;
+      display: flex; justify-content: center;
+    }
+    .stats-inner {
+      display: flex; gap: 0;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+    }
+    .stat-item {
+      padding: 24px 40px; text-align: center;
+      border-right: 1px solid var(--border);
+      flex: 1;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+      letter-spacing: -0.04em; color: var(--text);
+    }
+    .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ─── SECTION LABELS ─── */
+    .section-kicker {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--blue-light);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 800; letter-spacing: -0.035em;
+      line-height: 1.15; margin-bottom: 16px;
+    }
+    .section-sub { color: var(--muted-hi); font-size: 1rem; max-width: 540px; line-height: 1.6; }
+
+    /* ─── SERVICES GRID ─── */
+    .services-section {
+      padding: 0 28px 100px;
+      max-width: 1120px; margin: 0 auto;
+    }
+    .services-head { margin-bottom: 52px; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .svc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      display: flex; flex-direction: column;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .svc-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--card-accent, var(--blue-light)), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .svc-card:hover { border-color: var(--border-hi); transform: translateY(-4px); }
+    .svc-card:hover::before { opacity: 1; }
+    .svc-card-blue { --card-accent: var(--blue-light); }
+    .svc-card-purple { --card-accent: var(--purple-light); }
+    .svc-card-cyan { --card-accent: var(--cyan); }
+    .svc-card-blue:hover { box-shadow: 0 16px 40px rgba(37,99,235,0.1); border-color: rgba(59,130,246,0.3); }
+    .svc-card-purple:hover { box-shadow: 0 16px 40px rgba(124,58,237,0.1); border-color: rgba(167,139,250,0.3); }
+    .svc-card-cyan:hover { box-shadow: 0 16px 40px rgba(6,182,212,0.1); border-color: rgba(6,182,212,0.3); }
+
+    .svc-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px; font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icon-blue   { background: rgba(37,99,235,0.12);  border: 1px solid rgba(59,130,246,0.2);  }
+    .icon-purple { background: rgba(124,58,237,0.12); border: 1px solid rgba(167,139,250,0.2); }
+    .icon-cyan   { background: rgba(6,182,212,0.12);  border: 1px solid rgba(6,182,212,0.2);   }
+
+    .svc-kicker { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 8px; }
+    .kicker-blue   { color: var(--blue-light);   }
+    .kicker-purple { color: var(--purple-light); }
+    .kicker-cyan   { color: var(--cyan);         }
+
+    .svc-title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 10px; line-height: 1.35; }
+    .svc-desc  { font-size: 0.875rem; color: var(--muted-hi); line-height: 1.6; margin-bottom: 24px; }
+
+    .svc-divider { height: 1px; background: var(--border); margin-bottom: 20px; }
+
+    .svc-tiers { display: flex; flex-direction: column; gap: 12px; margin-top: auto; }
+    .tier-block {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px; padding: 14px 16px;
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .tier-block:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
+    .tier-txt h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 2px; }
+    .tier-txt p  { font-size: 0.75rem; color: var(--muted); line-height: 1.4; }
+    .tier-btn {
+      flex-shrink: 0; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text); font-size: 0.75rem; font-weight: 600;
+      padding: 7px 14px; border-radius: 6px; cursor: pointer;
+      font-family: var(--font-body); transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .tier-btn:hover { background: var(--text); color: var(--bg); }
+
+    /* ─── DIVIDER ─── */
+    .section-divider {
+      max-width: 1120px; margin: 0 auto 80px;
+      padding: 0 28px;
+      height: 1px; background: var(--border);
+    }
+
+    /* ─── WORKSPACE SECTION ─── */
+    .workspace-section { padding: 0 28px 120px; }
+    .workspace-inner {
+      max-width: 1120px; margin: 0 auto;
+      display: flex; gap: 80px; align-items: flex-start;
+    }
+    .workspace-sticky {
+      position: -webkit-sticky; position: sticky;
+      top: 88px; flex: 0 0 280px; align-self: flex-start;
+    }
+    .workspace-sticky .section-kicker { margin-bottom: 16px; }
+    .workspace-sticky .section-title  { margin-bottom: 12px; font-size: 2.2rem; }
+    .workspace-sticky .section-sub    { font-size: 0.9rem; margin-bottom: 28px; }
+    .workspace-sticky-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.85rem; font-weight: 600; color: var(--blue-light); text-decoration: none;
+    }
+    .workspace-sticky-link:hover { text-decoration: underline; }
+
+    /* category heading inside the cards column */
+    .products-col { flex: 1; display: flex; flex-direction: column; gap: 32px; }
+    .products-category-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); margin-top: 12px;
+      padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    }
+
+    .product-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 36px 40px;
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 32px; align-items: center;
+      position: relative; overflow: hidden;
+      transition: border-color 0.35s, transform 0.35s, box-shadow 0.35s;
+    }
+    .product-card::after {
+      content: ''; position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(600px circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.025), transparent 40%);
+      pointer-events: none; opacity: 0; transition: opacity 0.3s;
+    }
+    .product-card:hover::after { opacity: 1; }
+
+    .product-card:hover { transform: translateY(-4px); border-color: var(--border-hi); }
+    .card-swiftrade:hover  { border-color: rgba(16,185,129,0.35);  box-shadow: 0 20px 50px rgba(16,185,129,0.08);  }
+    .card-consultlink:hover{ border-color: rgba(6,182,212,0.35);   box-shadow: 0 20px 50px rgba(6,182,212,0.08);   }
+    .card-pulse:hover      { border-color: rgba(219,39,119,0.35);  box-shadow: 0 20px 50px rgba(219,39,119,0.08);  }
+    .card-whats:hover      { border-color: rgba(37,99,235,0.35);   box-shadow: 0 20px 50px rgba(37,99,235,0.08);   }
+
+    .card-pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 5px 12px; border-radius: 99px;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      color: var(--muted-hi); margin-bottom: 14px;
+    }
+    .pill-dot { width: 6px; height: 6px; border-radius: 50%; position: relative; }
+    .pill-dot::after {
+      content: ''; position: absolute; inset: 0; border-radius: 50%;
+      animation: ping 1.8s cubic-bezier(0,0,0.2,1) infinite; background: inherit;
+    }
+    .dot-green   { background: var(--green);   }
+    .dot-cyan    { background: var(--cyan);     }
+    .dot-magenta { background: var(--magenta);  }
+    .dot-blue    { background: var(--blue-light); }
+
+    .card-name {
+      font-family: var(--font-display); font-size: 2rem; font-weight: 900;
+      letter-spacing: -0.04em; margin-bottom: 4px; transition: transform 0.3s;
+    }
+    .product-card:hover .card-name { transform: translateX(4px); }
+    .card-tagline { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+    .tag-green   { color: var(--green);   }
+    .tag-cyan    { color: var(--cyan);    }
+    .tag-magenta { color: var(--magenta); }
+    .tag-blue    { color: var(--blue-light); }
+    .card-desc { font-size: 0.9rem; color: var(--muted-hi); line-height: 1.6; max-width: 480px; }
+
+    .platform-open-btn {
+      flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 13px 26px; border-radius: 10px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border-hi);
+      color: var(--text); font-size: 0.875rem; font-weight: 600; text-decoration: none;
+      font-family: var(--font-body); white-space: nowrap;
+      transition: background 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .product-card:hover .platform-open-btn {
+      background: var(--text); color: var(--bg); border-color: var(--text);
+      box-shadow: 0 4px 16px rgba(255,255,255,0.12);
+    }
+
+    /* ─── BOTTOM CTA ─── */
+    .cta-section {
+      padding: 0 28px 120px;
+    }
+    .cta-inner {
+      max-width: 1120px; margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px; padding: 72px 60px;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-inner::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(99,102,241,0.08), transparent);
+      pointer-events: none;
+    }
+    .cta-inner .section-title { font-size: clamp(1.7rem, 3vw, 2.4rem); margin-bottom: 14px; }
+    .cta-inner .section-sub   { max-width: 480px; margin: 0 auto 36px; }
+    .cta-actions { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border); padding: 36px 28px;
+      text-align: center; color: var(--muted); font-size: 0.8rem;
+    }
+
+    /* ─── MODAL ─── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(2,2,8,0.85);
+      z-index: 999; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease; padding: 20px;
+      backdrop-filter: blur(12px);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .wizard-card {
+      background: #060610; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px; width: 100%; max-width: 560px;
+      position: relative; box-shadow: 0 40px 80px rgba(0,0,0,0.85);
+      display: flex; flex-direction: column; max-height: 88vh;
+    }
+    .close-btn {
+      position: absolute; top: 18px; right: 18px; z-index: 10;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      border-radius: 8px; width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 1.2rem; cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .close-btn:hover { background: rgba(255,255,255,0.12); color: white; }
+
+    .wizard-body { padding: 36px; overflow-y: auto; flex-grow: 1; -webkit-overflow-scrolling: touch; }
+    .wizard-step { display: none; }
+    .wizard-step.active { display: block; }
+
+    .wizard-title    { font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .wizard-subtitle { color: var(--muted-hi); font-size: 0.875rem; margin-bottom: 24px; }
+
+    .opt-list { display: flex; flex-direction: column; gap: 10px; }
+    .opt {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px; padding: 15px 18px;
+      display: flex; justify-content: space-between; align-items: center;
+      color: var(--text); font-size: 0.9rem; font-weight: 500;
+      cursor: pointer; text-align: left; font-family: var(--font-body);
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    }
+    .opt::after { content: "→"; opacity: 0.4; font-weight: 700; }
+    .opt:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.18); transform: translateX(3px); }
+
+    .result-box {
+      background: rgba(37,99,235,0.05); border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 10px; padding: 20px; margin-bottom: 20px;
+    }
+    .result-title { font-size: 0.95rem; font-weight: 700; color: #93c5fd; margin-bottom: 10px; }
+    .result-body  { font-size: 0.9rem; color: #cbd5e1; line-height: 1.6; }
+
+    .back-btn {
+      background: none; border: none; color: var(--muted);
+      font-size: 0.82rem; font-weight: 600; cursor: pointer;
+      margin-top: 18px; display: inline-flex; align-items: center; gap: 4px;
+      font-family: var(--font-body); transition: color 0.15s;
+    }
+    .back-btn:hover { color: var(--text); }
+
+    .wizard-footer {
+      padding: 20px 36px 32px; border-top: 1px solid var(--border);
+      background: #040408; display: none;
+    }
+    .wizard-footer.show { display: block; }
+    .wizard-footer h4 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .wizard-footer p  { font-size: 0.82rem; color: var(--muted-hi); margin-bottom: 18px; }
+    .escalate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .esc {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 13px; border-radius: 9px; font-size: 0.875rem; font-weight: 700;
+      text-decoration: none; transition: opacity 0.15s;
+    }
+    .esc:hover { opacity: 0.88; }
+    .esc-wa    { background: #25d366; color: #000; }
+    .esc-email { background: #fff;    color: #000; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 960px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .workspace-inner { flex-direction: column; gap: 40px; }
+      .workspace-sticky { position: static; flex: none; }
+    }
+    @media (max-width: 720px) {
+      .hero { padding: 120px 20px 80px; }
+      .product-card { grid-template-columns: 1fr; padding: 28px 24px; gap: 20px; }
+      .stats-inner { flex-direction: column; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat-item:last-child { border-bottom: none; }
+      .cta-inner { padding: 48px 28px; }
+    }
+  </style>
 </head>
-<body class="flex justify-center items-start bg-[#030303]">
+<body>
 
-    <main 
-        x-data="{ 
-            activeTab: 'weekend',
-            isLoading: true,
-            events: [],
-            apiEndpoint: 'https://script.google.com/macros/s/AKfycbziBiOAPM6HDx7QZhJDuOQpu6FG4ZjbiWaj2AA-V5efsq_sgWPK41rPVCvjVdSnHE8X2g/exec
+  <!-- BACKGROUND LAYER -->
+  <div class="bg-stage">
+    <div class="bg-grid" id="bgGrid"></div>
+    <div class="bg-orb orb-a" id="orbA"></div>
+    <div class="bg-orb orb-b" id="orbB"></div>
+    <div class="bg-orb orb-c" id="orbC"></div>
+  </div>
 
-',
-            init() { fetch(this.apiEndpoint).then(r => r.json()).then(d => { this.events = d; this.isLoading = false; }); },
-            shareEvent(e) { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`📍 *${e.title}*\n🗓️ ${e.date} | ${e.time}\n🏢 ${e.venue}\n\n👉 https://vyetasolutions.github.io/`)}`, '_blank'); }
-        }"
-        class="w-full max-w-md h-[100dvh] bg-[#070707] flex flex-col overflow-hidden"
-    >
-        
-        <div class="px-6 pt-12 pb-4 glass-sticky z-40">
-            <h1 class="text-2xl font-extrabold text-white">WhatsHappenin<span class="text-gradient font-black">.</span></h1>
-            <p class="text-[9px] uppercase font-bold tracking-widest text-gray-500">The Weekend, Curated</p>
+  <div class="fg">
+
+    <!-- NAVBAR -->
+    <header class="nav">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo">
+          <svg class="logo-icon" viewBox="0 0 100 100" fill="none">
+            <circle cx="28" cy="28" r="13" fill="#2563eb"/>
+            <rect x="52" y="16" width="22" height="66" rx="11" transform="rotate(32 52 16)" fill="#2563eb"/>
+          </svg>
+          vyeta
+        </a>
+        <div class="nav-links">
+          <a href="#workspace" class="nav-link">Workspace</a>
+          <a href="#services" class="nav-link">Services</a>
+        </div>
+        <button class="nav-cta trigger-audit">Request Audit</button>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Zambia's Digital Infrastructure Layer
+      </div>
+      <h1>One Ecosystem.<br><em>Multiple Solutions.</em></h1>
+      <p class="hero-sub">Vyeta powers digital platforms like SwifTrade, ConsultLink, Pulse OS, and WhatsHappenin ZM — while delivering secure IT and automation infrastructure for every business.</p>
+      <div class="hero-actions">
+        <button class="btn-solid trigger-audit">Quick Self-Help &rarr;</button>
+        <a href="#workspace" class="btn-ghost">Explore Workspace</a>
+      </div>
+    </section>
+
+    <!-- STATS STRIP -->
+    <div class="stats-strip">
+      <div class="stats-inner">
+        <div class="stat-item">
+          <div class="stat-num">4+</div>
+          <div class="stat-label">Active Platforms</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Industry Verticals</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">ZM</div>
+          <div class="stat-label">Built for Zambia</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">24/7</div>
+          <div class="stat-label">Support Available</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICES SECTION -->
+    <section class="services-section" id="services">
+      <div class="services-head">
+        <div class="section-kicker">What We Fix</div>
+        <h2 class="section-title">Enterprise IT problems, solved.</h2>
+        <p class="section-sub">Select the operational bottleneck closest to your situation and see exactly how we address it.</p>
+      </div>
+
+      <div class="services-grid">
+
+        <!-- Card 1: Infrastructure -->
+        <div class="svc-card svc-card-blue">
+          <div class="svc-icon icon-blue">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#3b82f6" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <div class="svc-kicker kicker-blue">Infrastructure &amp; Helpdesk</div>
+          <h3 class="svc-title">Computers slow / Networks keep dropping</h3>
+          <p class="svc-desc">We deploy rock-solid office networking, structured cabling, and permanent hardware configurations backed by an active, on-call corporate support desk.</p>
+          <div class="svc-divider"></div>
+          <div class="svc-tiers">
+            <div class="tier-block">
+              <div class="tier-txt">
+                <h4>Essential Maintenance Retainer</h4>
+                <p>Routine hardware health checks, network optimization, next-day emergency assistance.</p>
+              </div>
+              <button class="tier-btn trigger-audit">Select</button>
+            </div>
+            <div class="tier-block">
+              <div class="tier-txt">
+                <h4>Professional Support Retainer</h4>
+                <p>24/7 proactive system tracking, same-day on-site troubleshooting, full coverage.</p>
+              </div>
+              <button class="tier-btn trigger-audit">Select</button>
+            </div>
+          </div>
         </div>
 
-        <div class="flex-grow overflow-y-auto no-scrollbar px-6 pt-4 pb-32">
-            <div x-show="activeTab === 'weekend'" class="space-y-4">
-                <template x-for="event in events.filter(e => e.type === 'weekend')" :key="event.id">
-                    <div class="rounded-[32px] bg-zinc-900 border border-white/[0.06] p-4 space-y-3">
-                        <span class="text-[10px] font-bold text-emerald-400 uppercase" x-text="(event.date || '') + ' | ' + (event.time || '')"></span>
-                        <h3 class="text-sm font-bold text-white" x-text="event.title"></h3>
-                        <button @click="shareEvent(event)" class="w-full py-2 rounded-xl bg-white text-black text-[10px] font-bold uppercase">Share with Crew</button>
-                    </div>
-                </template>
+        <!-- Card 2: Software & Automation -->
+        <div class="svc-card svc-card-purple">
+          <div class="svc-icon icon-purple">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#a78bfa" stroke-width="1.8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <div class="svc-kicker kicker-purple">Software &amp; Automation</div>
+          <h3 class="svc-title">Too much manual data entry / Staff bottlenecked</h3>
+          <p class="svc-desc">We build tailored business management apps, automated Google Apps Script pipelines, and lightweight web platforms to clean up manual operations.</p>
+          <div class="svc-divider"></div>
+          <div class="svc-tiers">
+            <div class="tier-block">
+              <div class="tier-txt">
+                <h4>Operational Automation Setup</h4>
+                <p>Custom Google Workspace scripts, automated reporting pipelines, app integrations.</p>
+              </div>
+              <button class="tier-btn trigger-audit">Select</button>
             </div>
-            
-            <div x-show="activeTab === 'weekday'" class="space-y-3">
-                <template x-for="event in events.filter(e => e.type === 'weekday')" :key="event.id">
-                    <div class="glass-card rounded-2xl p-4">
-                        <h3 class="text-sm font-bold text-white" x-text="event.title"></h3>
-                        <span class="text-emerald-400 text-[10px] uppercase font-bold" x-text="(event.date || '') + ' | ' + (event.time || '')"></span>
-                    </div>
-                </template>
+            <div class="tier-block">
+              <div class="tier-txt">
+                <h4>Custom Enterprise Platforms</h4>
+                <p>Dedicated billing software, multi-tiered web apps, tailored customer registries.</p>
+              </div>
+              <button class="tier-btn trigger-audit">Select</button>
             </div>
+          </div>
         </div>
 
-        <nav class="absolute bottom-0 w-full p-4 flex justify-center">
-            <div class="glass-card w-full max-w-sm rounded-2xl px-6 py-3.5 flex justify-around items-center border border-white/[0.07]">
-                <button @click="activeTab = 'weekend'" class="text-emerald-400 text-[10px] font-bold uppercase">Weekend</button>
-                <button @click="activeTab = 'weekday'" class="text-gray-500 text-[10px] font-bold uppercase">Weekdays</button>
+        <!-- Card 3: Cybersecurity -->
+        <div class="svc-card svc-card-cyan">
+          <div class="svc-icon icon-cyan">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#06b6d4" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="svc-kicker kicker-cyan">Cybersecurity &amp; Strategy</div>
+          <h3 class="svc-title">Worried about data leaks / Unprotected endpoints</h3>
+          <p class="svc-desc">We run network penetration testing, administer controlled phishing drills, and construct secure access parameters to lock down commercial data assets.</p>
+          <div class="svc-divider"></div>
+          <div class="svc-tiers">
+            <div class="tier-block">
+              <div class="tier-txt">
+                <h4>Corporate Threat Assessment</h4>
+                <p>Full security scanning, network liability audits, employee access optimization.</p>
+              </div>
+              <button class="tier-btn trigger-audit">Select</button>
             </div>
-        </nav>
-    </main>
+            <div class="tier-block">
+              <div class="tier-txt">
+                <h4>Continuous Security &amp; Strategy</h4>
+                <p>Ongoing vulnerability assessments, active monitoring, data recovery prep.</p>
+              </div>
+              <button class="tier-btn trigger-audit">Select</button>
+            </div>
+          </div>
+        </div>
 
-    <script>
-        function renderIcons() { if (window.lucide) window.lucide.createIcons(); }
-        document.addEventListener('alpine:initialized', renderIcons);
-    </script>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- WORKSPACE SECTION -->
+    <section class="workspace-section" id="workspace">
+      <div class="workspace-inner">
+
+        <div class="workspace-sticky">
+          <div class="section-kicker">Vyeta Workspace</div>
+          <h2 class="section-title">Bridging Gaps With Smart Tools</h2>
+          <p class="section-sub">A growing suite of digital platforms built specifically for Zambian and African market realities.</p>
+          <a href="#services" class="workspace-sticky-link">View IT services &rarr;</a>
+        </div>
+
+        <div class="products-col">
+
+          <div class="products-category-label">Business &amp; Commerce</div>
+
+          <!-- SwifTrade -->
+          <div class="product-card card-swiftrade">
+            <div>
+              <div class="card-pill"><span class="pill-dot dot-green"></span> Active Platform</div>
+              <div class="card-name">swifTrade</div>
+              <div class="card-tagline tag-green">B2B Procurement Marketplace</div>
+              <p class="card-desc">Direct request-matching network built to link verified commercial buyers with bulk product suppliers instantly.</p>
+            </div>
+            <a href="https://vyetasolutions.github.io/Swiftrade-newv/" target="_blank" class="platform-open-btn">Open Platform &rarr;</a>
+          </div>
+
+          <!-- ConsultLink -->
+          <div class="product-card card-consultlink">
+            <div>
+              <div class="card-pill"><span class="pill-dot dot-cyan"></span> Live Preview</div>
+              <div class="card-name">ConsultLink</div>
+              <div class="card-tagline tag-cyan">On-Demand Specialist Routing</div>
+              <p class="card-desc">Bridges organizational operations straight to legal, medical, and technical advisory consultants on demand.</p>
+            </div>
+            <a href="https://vyetasolutions.github.io/consultlink/#" target="_blank" class="platform-open-btn">Open Preview &rarr;</a>
+          </div>
+
+          <!-- Pulse OS -->
+          <div class="product-card card-pulse">
+            <div>
+              <div class="card-pill"><span class="pill-dot dot-magenta"></span> Operational</div>
+              <div class="card-name">Pulse OS ZM</div>
+              <div class="card-tagline tag-magenta">Civic Feedback Engine</div>
+              <p class="card-desc">Public system engineered for recording regional community updates and tracking local civic responses.</p>
+            </div>
+            <a href="https://vyetasolutions.github.io/pulse-os-zm/" target="_blank" class="platform-open-btn">Open System &rarr;</a>
+          </div>
+
+          <div class="products-category-label" style="margin-top: 8px;">Lifestyle &amp; Entertainment</div>
+
+          <!-- WhatsHappenin -->
+          <div class="product-card card-whats">
+            <div>
+              <div class="card-pill"><span class="pill-dot dot-blue"></span> Trending</div>
+              <div class="card-name">WhatsHappenin ZM</div>
+              <div class="card-tagline tag-blue">Zambian Events &amp; Experiences</div>
+              <p class="card-desc">Designed to help discover events, activities, promotions, entertainment, and experiences happening around Zambia.</p>
+            </div>
+            <a href="https://vyetasolutions.github.io/WhatsHappenin-ZM/" target="_blank" class="platform-open-btn">Explore Events &rarr;</a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- BOTTOM CTA -->
+    <section class="cta-section">
+      <div class="cta-inner">
+        <div class="section-kicker">Get Started Today</div>
+        <h2 class="section-title">Ready to fix your IT infrastructure?</h2>
+        <p class="section-sub">Tell us your biggest operational pain point and we'll match you with the right retainer, same day.</p>
+        <div class="cta-actions">
+          <button class="btn-solid trigger-audit">Start Self-Help Diagnostic &rarr;</button>
+          <a href="https://wa.me/260777363303" target="_blank" class="btn-ghost">WhatsApp Us</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>&copy; 2026 Vyeta. Built for performance in Zambia.</p>
+    </footer>
+
+  </div><!-- /fg -->
+
+  <!-- MODAL WIZARD -->
+  <div class="modal-overlay" id="auditModal">
+    <div class="wizard-card">
+      <button class="close-btn" id="closeModal">&times;</button>
+
+      <div class="wizard-body" id="wizBody">
+
+        <!-- Step 1 -->
+        <div class="wizard-step active" id="step1">
+          <p class="wizard-title">What is giving you trouble right now?</p>
+          <p class="wizard-subtitle">Select the area that needs to be fixed.</p>
+          <div class="opt-list">
+            <button class="opt" onclick="goStep('network')">Office Wi-Fi or Internet Connection</button>
+            <button class="opt" onclick="goStep('pc')">Computers, Laptops, or Screens</button>
+            <button class="opt" onclick="goStep('mobile')">Phones or Tablets</button>
+          </div>
+        </div>
+
+        <!-- Network -->
+        <div class="wizard-step" id="step-network">
+          <p class="wizard-title">What's wrong with the internet?</p>
+          <p class="wizard-subtitle">Choose the description that best fits your situation.</p>
+          <div class="opt-list">
+            <button class="opt" onclick="showSol('net-down')">The internet is completely down for everyone</button>
+            <button class="opt" onclick="showSol('net-slow')">Works but pages take forever to load</button>
+            <button class="opt" onclick="showSol('net-drop')">Wi-Fi randomly disconnects and reconnects</button>
+          </div>
+          <button class="back-btn" onclick="goStep(1)">&larr; Back</button>
+        </div>
+
+        <!-- PC -->
+        <div class="wizard-step" id="step-pc">
+          <p class="wizard-title">What is your computer doing?</p>
+          <p class="wizard-subtitle">Choose the option that describes the issue.</p>
+          <div class="opt-list">
+            <button class="opt" onclick="showSol('pc-dead')">It won't turn on at all / Completely dead</button>
+            <button class="opt" onclick="showSol('pc-slow')">Keeps freezing, locking up, or running slow</button>
+            <button class="opt" onclick="showSol('pc-bsod')">Shows error screen (Blue Screen) or keeps restarting</button>
+          </div>
+          <button class="back-btn" onclick="goStep(1)">&larr; Back</button>
+        </div>
+
+        <!-- Mobile -->
+        <div class="wizard-step" id="step-mobile">
+          <p class="wizard-title">What is wrong with the device?</p>
+          <p class="wizard-subtitle">Choose the issue you are facing.</p>
+          <div class="opt-list">
+            <button class="opt" onclick="showSol('mob-email')">Can't log into company email or work accounts</button>
+            <button class="opt" onclick="showSol('mob-hw')">Screen cracked or battery won't hold charge</button>
+          </div>
+          <button class="back-btn" onclick="goStep(1)">&larr; Back</button>
+        </div>
+
+        <!-- Solution -->
+        <div class="wizard-step" id="step-solution">
+          <p class="wizard-title">Try these simple steps right now:</p>
+          <p class="wizard-subtitle">We recommend trying this quick checklist first.</p>
+          <div class="result-box">
+            <div class="result-title" id="solTitle">Analyzing...</div>
+            <div class="result-body"  id="solBody">Please wait.</div>
+          </div>
+          <button class="back-btn" onclick="goBackSub()">&larr; Back to Symptoms</button>
+        </div>
+
+      </div><!-- /wizBody -->
+
+      <div class="wizard-footer" id="wizFooter">
+        <h4>Did that solve the problem?</h4>
+        <p>If you're still stuck, reach us immediately or book a system audit.</p>
+        <div class="escalate-grid">
+          <a href="#" id="waBtn"    target="_blank" class="esc esc-wa">💬 Chat on WhatsApp</a>
+          <a href="#" id="emailBtn"                 class="esc esc-email">📋 Request Rapid Audit</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── PARALLAX ── */
+    window.addEventListener('scroll', () => {
+      const s = window.pageYOffset;
+      document.getElementById('bgGrid').style.transform = `rotateX(72deg) translateY(${s * 0.32}px)`;
+      document.getElementById('orbA').style.transform   = `translateY(${s * 0.20}px)`;
+      document.getElementById('orbB').style.transform   = `translateY(${s * -0.14}px)`;
+      document.getElementById('orbC').style.transform   = `translateY(${s * 0.07}px)`;
+    });
+
+    /* ── CARD CURSOR GLOW ── */
+    document.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        card.style.setProperty('--my', `${e.clientY - r.top}px`);
+      });
+    });
+
+    /* ── MODAL ── */
+    const modal     = document.getElementById('auditModal');
+    const wizBody   = document.getElementById('wizBody');
+    const wizFooter = document.getElementById('wizFooter');
+    let   lastCat   = '';
+
+    document.querySelectorAll('.trigger-audit').forEach(el =>
+      el.addEventListener('click', e => { e.preventDefault(); modal.classList.add('open'); goStep(1); })
+    );
+    document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+
+    function goStep(s) {
+      document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+      wizFooter.classList.remove('show');
+      wizBody.scrollTop = 0;
+      if (s === 1) { document.getElementById('step1').classList.add('active'); }
+      else { lastCat = s; document.getElementById('step-' + s).classList.add('active'); }
+    }
+    function goBackSub() { goStep(lastCat); }
+
+    const SOLUTIONS = {
+      'net-down':  { title: 'No Internet Connection Checklist',
+        text: '• Check with your team: Is everyone disconnected or just you? Restart your computer first.<br><br>• Look at your main internet box: Are there red lights blinking? If yes, the provider is likely down.<br><br>• The 30-Second Rule: Unplug the power from the internet box, wait 30 seconds, plug it back in. Takes 2–3 minutes to fully restart.',
+        ctx: 'Internet is completely down across the office' },
+      'net-slow':  { title: 'Slow Internet Fixes',
+        text: '• Pause big apps: Close OneDrive, Google Drive, Dropbox, or YouTube syncing in the background.<br><br>• Test a cable: Plug your laptop directly into a wall socket. If fast, your Wi-Fi antenna needs optimization.<br><br>• Reboot your machine: Old network memory logs can get stuck — a simple restart clears the path.',
+        ctx: 'Internet is working but running very slowly' },
+      'net-drop':  { title: 'Fixing Weak or Dropping Wi-Fi',
+        text: '• Move closer to the antenna: If it cuts out in specific rooms, you have a Wi-Fi blindspot.<br><br>• Forget the network: Go to Wi-Fi settings, click "Forget Network", turn Wi-Fi off and back on, re-enter password.<br><br>• Unplug extra splitters: Loose cables looped back into the same wall sockets can confuse the router grid.',
+        ctx: 'Wi-Fi keeps dropping and disconnecting' },
+      'pc-dead':   { title: "Computer Won't Turn On Checklist",
+        text: '• Check the wall socket: Plug a phone charger into the exact same socket — is it getting power at all?<br><br>• Deep Power Drain: Unplug the power cord, hold the power button 15 seconds while unplugged, then plug back in and try again.<br><br>• Check charging light: Is a tiny light glowing where the cable enters the laptop? No light = cable or port may be damaged.',
+        ctx: 'Computer or laptop will not turn on at all' },
+      'pc-slow':   { title: 'Fixing a Frozen or Slow Computer',
+        text: '• Emergency Escape: Press <b>Ctrl + Shift + Esc</b> — look for any app using high memory and click "End Task".<br><br>• Close old browser tabs: Dozens of open tabs silently drain your computer speed.<br><br>• Check storage space: Make sure your hard drive is not completely full — computers need breathing room.',
+        ctx: 'Computer keeps freezing or running slow' },
+      'pc-bsod':   { title: 'Handling Error Screens & Auto-Restarts',
+        text: '• Unplug all accessories: Remove USB drives, external monitors, printers, and mice, then restart.<br><br>• Let updates finish: If it says "Installing updates, do not turn off" — leave it alone. Forcing off can damage system files.<br><br>• Keep it cool: If the bottom or back is boiling hot, turn it off and let it cool 20 minutes before restarting.',
+        ctx: 'Computer shows blue screen error or keeps restarting' },
+      'mob-email': { title: 'Company Email & Account Sync Help',
+        text: '• Try mobile data: Turn off Wi-Fi and open work email on cellular data. If that works, your office network is blocking sync.<br><br>• Check the time: If your phone clock is off by even a few minutes, security servers will automatically reject your login.<br><br>• Update the app: Open the Play Store or App Store and make sure Outlook or Gmail is fully updated.',
+        ctx: 'Mobile device cannot connect to company email or work apps' },
+      'mob-hw':    { title: 'Physical Hardware Damaged or Weak Battery',
+        text: '• Stop using a swelling battery: If the back or screen is popping outward, turn it off immediately and stop charging it.<br><br>• Screen glitches: If cracked and flickering, avoid file transfers until a backup is done.<br><br>• Clean charging socket: Use a toothpick to gently clear lint from the charging port if the cable keeps slipping.',
+        ctx: 'Phone has physical damage or battery issues' },
+    };
+
+    function showSol(key) {
+      const d = SOLUTIONS[key];
+      document.getElementById('solTitle').innerText   = d.title;
+      document.getElementById('solBody').innerHTML    = d.text;
+      const base = 'https://wa.me/260777363303';
+      const waTxt = encodeURIComponent(`Hi Vyeta team, I'm on your website with an issue: "${d.ctx}". We tried the quick-fix guide but still need help. Can we get an engineer or schedule an audit?`);
+      document.getElementById('waBtn').href    = `${base}?text=${waTxt}`;
+      const sub  = encodeURIComponent(`IT Support Needed: ${d.ctx}`);
+      const body = encodeURIComponent(`Vyeta Operations,\n\nWe're experiencing: ${d.ctx}.\n\nWe reviewed the quick-fix guide on the landing page but need professional assistance. Please let us know when to schedule an infrastructure audit.\n\nBest regards.`);
+      document.getElementById('emailBtn').href = `mailto:operations@vyeta.com?subject=${sub}&body=${body}`;
+      document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+      document.getElementById('step-solution').classList.add('active');
+      wizFooter.classList.add('show');
+      wizBody.scrollTop = 0;
+    }
+  </script>
 </body>
 </html>
