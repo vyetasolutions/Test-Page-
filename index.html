@@ -13,9 +13,9 @@
 ───────────────────────────────────────── */
 :root {
   --bg: #02020b;
-  --surface: rgba(12, 12, 28, 0.45); /* Refined glass base */
+  --surface: rgba(12, 12, 28, 0.45);
   --surface-hi: rgba(20, 20, 42, 0.65);
-  --gblur: blur(32px); /* Deepened blur for premium feel */
+  --gblur: blur(32px);
   --bd: rgba(255, 255, 255, 0.06);
   --bd-hi: rgba(255, 255, 255, 0.12);
   --text: #ffffff;
@@ -30,7 +30,6 @@
   --fh: 'Bricolage Grotesque', sans-serif;
   --fb: 'IBM Plex Sans', sans-serif;
   
-  /* Supercharged Easing Curve */
   --spring: cubic-bezier(0.19, 1, 0.22, 1);
 }
 
@@ -47,15 +46,14 @@ body {
   color: var(--text); 
   line-height: 1.6; 
   overflow-x: hidden; 
-  -webkit-font-smoothing: antialiased; /* Sharper text on Mac/iOS */
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ─────────────────────────────────────────
    SUPERCHARGED BACKGROUND
 ───────────────────────────────────────── */
-.bg { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.bg { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; background-color: #02020b; }
 
-/* The Grid - Now Hardware Accelerated */
 .bg-grid {
   position: absolute; top: -20%; left: -50%; width: 200%; height: 200%;
   background-image: 
@@ -67,20 +65,23 @@ body {
   will-change: transform;
 }
 
-#starCanvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.8; }
+#starCanvas { 
+  position: absolute; inset: -10%; width: 120%; height: 120%; /* Oversized for parallax panning */
+  pointer-events: none; opacity: 0.9; 
+  will-change: transform;
+}
 
 .bg-aurora { position: absolute; inset: 0; pointer-events: none; transition: background 2s ease; }
 
 .orb {
   position: absolute; border-radius: 50%; filter: blur(160px); mix-blend-mode: screen;
   will-change: transform; pointer-events: none; transition: background 2.5s ease;
-  transform: translateZ(0); /* Force GPU */
+  transform: translateZ(0);
 }
-.orb-1 { width: 600px; height: 600px; background: radial-gradient(#1e40af, transparent); top: 5%; left: -5%; opacity: 0.12; }
-.orb-2 { width: 700px; height: 700px; background: radial-gradient(#6d28d9, transparent); top: 40%; right: -10%; opacity: 0.09; }
-.orb-3 { width: 500px; height: 500px; background: radial-gradient(#0891b2, transparent); bottom: -10%; left: 15%; opacity: 0.08; }
+.orb-1 { width: 600px; height: 600px; background: radial-gradient(#1e40af, transparent); top: 5%; left: -5%; opacity: 0.15; }
+.orb-2 { width: 700px; height: 700px; background: radial-gradient(#6d28d9, transparent); top: 40%; right: -10%; opacity: 0.12; }
+.orb-3 { width: 500px; height: 500px; background: radial-gradient(#0891b2, transparent); bottom: -10%; left: 15%; opacity: 0.10; }
 
-/* Subtle Grain overlay - less aggressive, more cinematic */
 body::after {
   content: ''; position: fixed; inset: 0; z-index: 2; pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -90,16 +91,18 @@ body::after {
 .fg { position: relative; z-index: 10; }
 
 /* ─────────────────────────────────────────
-   REFINED SCROLL REVEAL
+   REFINED SCROLL REVEAL (FASTER & SNAPPIER)
 ───────────────────────────────────────── */
 .reveal {
   opacity: 0; 
-  transform: translateY(30px) scale(0.98); /* Slight scale for depth */
-  transition: opacity 0.8s var(--spring), transform 0.8s var(--spring);
+  transform: translateY(20px) scale(0.98); /* Reduced travel distance so it snaps faster */
+  transition: opacity 0.5s var(--spring), transform 0.5s var(--spring);
 }
 .reveal.in { opacity: 1; transform: none; }
-.d1 { transition-delay: 0.06s; } .d2 { transition-delay: 0.12s; } 
-.d3 { transition-delay: 0.18s; } .d4 { transition-delay: 0.24s; }
+
+/* Reduced stagger delays to eliminate waiting */
+.d1 { transition-delay: 0.05s; } .d2 { transition-delay: 0.1s; } 
+.d3 { transition-delay: 0.15s; } .d4 { transition-delay: 0.2s; }
 
 @media(prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
@@ -107,7 +110,7 @@ body::after {
 }
 
 /* ─────────────────────────────────────────
-   NAVBAR (Ultra-Glass)
+   NAVBAR
 ───────────────────────────────────────── */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 200;
@@ -122,11 +125,11 @@ body::after {
   box-shadow: 0 4px 30px rgba(0,0,0,0.5);
 }
 .nav-in {
-  max-width: 1140px; margin: 0 auto; padding: 0 28px; height: 72px; /* Taller initial state */
+  max-width: 1140px; margin: 0 auto; padding: 0 28px; height: 72px;
   display: flex; align-items: center; justify-content: space-between;
   transition: height 0.4s var(--spring);
 }
-.nav.scrolled .nav-in { height: 60px; /* Compress on scroll */ }
+.nav.scrolled .nav-in { height: 60px; }
 
 .nav-logo {
   display: flex; align-items: center; gap: 10px; font-family: var(--fh); font-size: 1.4rem;
@@ -158,7 +161,7 @@ body::after {
   padding: 8px 20px; border-radius: 99px; font-size: 0.7rem; font-weight: 700;
   letter-spacing: 0.08em; color: var(--purple-lt); text-transform: uppercase;
   margin-bottom: 40px; backdrop-filter: blur(12px);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1); /* 3D pop */
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
 }
 .bdot { width: 6px; height: 6px; border-radius: 50%; background: var(--purple-lt); position: relative; }
 .bdot::after {
@@ -186,13 +189,13 @@ body::after {
 .hero-btns { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
 
 /* ─────────────────────────────────────────
-   BUTTONS (Elevated)
+   BUTTONS
 ───────────────────────────────────────── */
 .btn-solid {
   display: inline-flex; align-items: center; gap: 8px;
   background: linear-gradient(135deg, var(--blue), var(--purple));
   color: #fff; padding: 16px 36px; border-radius: 12px; font-size: 0.95rem; font-weight: 600;
-  border: 1px solid rgba(255,255,255,0.1); border-bottom-color: rgba(0,0,0,0.3); /* Premium ridge */
+  border: 1px solid rgba(255,255,255,0.1); border-bottom-color: rgba(0,0,0,0.3); 
   cursor: pointer; font-family: var(--fb); text-decoration: none;
   box-shadow: 0 4px 24px rgba(99, 102, 241, 0.25), inset 0 1px 0 rgba(255,255,255,0.2);
   transition: transform 0.3s var(--spring), box-shadow 0.3s var(--spring);
@@ -213,13 +216,13 @@ body::after {
 .btn-ghost:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.25); }
 
 /* ─────────────────────────────────────────
-   STATS (Glass Panel)
+   STATS
 ───────────────────────────────────────── */
 .stats-wrap { max-width: 1140px; margin: 0 auto; padding: 0 28px 96px; }
 .stats-inner {
   display: flex; background: var(--surface); backdrop-filter: var(--gblur); -webkit-backdrop-filter: var(--gblur);
   border: 1px solid var(--bd); border-radius: 20px; overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05); /* Deep shadow */
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 .stat { flex: 1; padding: 32px 36px; text-align: center; border-right: 1px solid var(--bd); }
 .stat:last-child { border-right: none; }
@@ -227,7 +230,7 @@ body::after {
 .stat-l { font-size: 0.75rem; color: var(--muted-hi); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
 
 /* ─────────────────────────────────────────
-   OUTCOMES ACCORDION (Refined)
+   OUTCOMES ACCORDION
 ───────────────────────────────────────── */
 .out-sec { padding: 0 28px 112px; max-width: 1140px; margin: 0 auto; }
 .out-head { text-align: center; margin-bottom: 64px; }
@@ -242,7 +245,6 @@ body::after {
   border: 1px solid var(--bd); border-radius: 20px; overflow: hidden; position: relative;
   transition: border-color 0.4s var(--spring), box-shadow 0.4s var(--spring);
 }
-/* Mouse tracking glow */
 .oc::before {
   content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
   background: radial-gradient(600px circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.04), transparent 40%);
@@ -251,7 +253,7 @@ body::after {
 .oc:hover::before { opacity: 1; }
 .oc.active {
   border-color: var(--oc-col, var(--purple-lt));
-  background: rgba(14, 14, 34, 0.85); /* Darken slightly on open */
+  background: rgba(14, 14, 34, 0.85);
   box-shadow: 0 0 0 1px var(--oc-col, var(--purple-lt)), 0 20px 60px rgba(0,0,0,0.5);
 }
 
@@ -331,7 +333,6 @@ body::after {
   transition: transform 0.4s var(--spring), border-color 0.4s, box-shadow 0.4s;
 }
 
-/* Card Glow Effect */
 .ws-card::before {
   content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
   background: radial-gradient(800px circle at var(--x, 0px) var(--y, 0px), rgba(255,255,255,0.03), transparent 40%);
@@ -366,13 +367,22 @@ body::after {
 }
 .ws-card:hover .ws-btn { background: #fff; color: #000; border-color: #fff; }
 
-/* Theming */
 .t-biz { --c-hex: #a78bfa; --c-bg: rgba(167,139,250,0.08); }
 .t-mob { --c-hex: #f59e0b; --c-bg: rgba(245,158,11,0.08); }
 .t-con { --c-hex: #06b6d4; --c-bg: rgba(6,182,212,0.08); }
 .t-pul { --c-hex: #db2777; --c-bg: rgba(219,39,119,0.08); }
 .t-swi { --c-hex: #10b981; --c-bg: rgba(16,185,129,0.08); }
 .t-wha { --c-hex: #60a5fa; --c-bg: rgba(96,165,250,0.08); }
+
+.eco-split {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 64px;
+  align-items: start;
+}
+.eco-sticky { position: -webkit-sticky; position: sticky; top: 120px; z-index: 10; }
+.eco-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.eco-subhead { grid-column: 1 / -1; margin-top: 24px; padding-top: 32px; border-top: 1px solid var(--bd); }
 
 /* ─────────────────────────────────────────
    CTA + FOOTER
@@ -473,6 +483,11 @@ footer{border-top:1px solid var(--bd);padding:40px 28px;text-align:center;color:
 /* ─────────────────────────────────────────
    RESPONSIVE
 ───────────────────────────────────────── */
+@media(max-width:950px){
+  .eco-split { grid-template-columns: 1fr; gap: 40px; }
+  .eco-sticky { position: static; text-align: center; margin-bottom: 24px; }
+  .eco-sticky .sec-p { margin: 0 auto; }
+}
 @media(max-width:860px){.oc-sols{grid-template-columns:1fr 1fr}}
 @media(max-width:640px){
   .hero{padding:140px 20px 80px}
@@ -653,98 +668,107 @@ footer{border-top:1px solid var(--bd);padding:40px 28px;text-align:center;color:
 
 <section class="workspace-sec" id="workspace">
   <div class="workspace-in">
-    <div class="ws-header reveal">
-      <div class="kicker">Vyeta Presents</div>
-      <h2 class="sec-h">Workspace</h2>
-      <p class="sec-p">Connected platforms. One ecosystem. Each solving a real gap in the Zambian market — designed to work flawlessly together.</p>
-    </div>
 
-    <div class="ws-grid">
+    <div class="eco-split">
       
-      <div class="ws-card t-biz reveal d1">
-        <div class="ws-top">
-          <span class="ws-badge">Active Suite</span>
-        </div>
-        <div class="ws-body">
-          <h3 class="ws-title">Vyeta Business Suite</h3>
-          <div class="ws-tag">Micro-Business Services</div>
-          <p class="ws-desc">Providing essential business, legal, and operational services tailored to empower micro and informal businesses.</p>
-        </div>
-        <div class="ws-foot">
-          <a href="https://vyetasolutions.github.io/businessinabox/" target="_blank" class="ws-btn">Open Suite &rarr;</a>
-        </div>
+      <div class="eco-sticky reveal">
+        <div class="kicker">Vyeta Presents</div>
+        <h2 class="sec-h">Workspace</h2>
+        <p class="sec-p">Connected platforms. One ecosystem. Each solving a real gap in the Zambian market — designed to work flawlessly together.</p>
       </div>
 
-      <div class="ws-card t-mob reveal d2">
-        <div class="ws-top">
-          <span class="ws-badge">Active Network</span>
+      <div class="eco-cards">
+        
+        <div class="ws-card t-biz reveal d1">
+          <div class="ws-top">
+            <span class="ws-badge">Active Suite</span>
+          </div>
+          <div class="ws-body">
+            <h3 class="ws-title">Vyeta Business Suite</h3>
+            <div class="ws-tag">Micro-Business Services</div>
+            <p class="ws-desc">Providing essential business, legal, and operational services tailored to empower micro and informal businesses.</p>
+          </div>
+          <div class="ws-foot">
+            <a href="https://vyetasolutions.github.io/businessinabox/" target="_blank" class="ws-btn">Open Suite &rarr;</a>
+          </div>
         </div>
-        <div class="ws-body">
-          <h3 class="ws-title">Vyeta Mobility</h3>
-          <div class="ws-tag">Transport & Logistics</div>
-          <p class="ws-desc">A one-stop service for transport. Easily rent a car, hail a ride, or manage operational moving needs.</p>
-        </div>
-        <div class="ws-foot">
-          <a href="https://vyetasolutions.github.io/vyeta-mobility-network-/" target="_blank" class="ws-btn">Open Mobility &rarr;</a>
-        </div>
-      </div>
 
-      <div class="ws-card t-con reveal d3">
-        <div class="ws-top">
-          <span class="ws-badge">Live Preview</span>
+        <div class="ws-card t-mob reveal d2">
+          <div class="ws-top">
+            <span class="ws-badge">Active Network</span>
+          </div>
+          <div class="ws-body">
+            <h3 class="ws-title">Vyeta Mobility</h3>
+            <div class="ws-tag">Transport & Logistics</div>
+            <p class="ws-desc">A one-stop service for transport. Easily rent a car, hail a ride, or manage operational moving needs.</p>
+          </div>
+          <div class="ws-foot">
+            <a href="https://vyetasolutions.github.io/vyeta-mobility-network-/" target="_blank" class="ws-btn">Open Mobility &rarr;</a>
+          </div>
         </div>
-        <div class="ws-body">
-          <h3 class="ws-title">ConsultLink</h3>
-          <div class="ws-tag">On-Demand Advisory</div>
-          <p class="ws-desc">Bridges organizational operations straight to legal, medical, and technical advisory consultants.</p>
-        </div>
-        <div class="ws-foot">
-          <a href="https://vyetasolutions.github.io/consultlink/#" target="_blank" class="ws-btn">Preview &rarr;</a>
-        </div>
-      </div>
 
-      <div class="ws-card t-pul reveal d1">
-        <div class="ws-top">
-          <span class="ws-badge">Operational</span>
+        <div class="ws-card t-con reveal d1">
+          <div class="ws-top">
+            <span class="ws-badge">Live Preview</span>
+          </div>
+          <div class="ws-body">
+            <h3 class="ws-title">ConsultLink</h3>
+            <div class="ws-tag">On-Demand Advisory</div>
+            <p class="ws-desc">Bridges organizational operations straight to legal, medical, and technical advisory consultants.</p>
+          </div>
+          <div class="ws-foot">
+            <a href="https://vyetasolutions.github.io/consultlink/#" target="_blank" class="ws-btn">Preview &rarr;</a>
+          </div>
         </div>
-        <div class="ws-body">
-          <h3 class="ws-title">Pulse OS ZM</h3>
-          <div class="ws-tag">Civic Feedback</div>
-          <p class="ws-desc">Public system engineered for recording regional community updates and tracking local responses.</p>
-        </div>
-        <div class="ws-foot">
-          <a href="https://vyetasolutions.github.io/pulse-os-zm/" target="_blank" class="ws-btn">Open System &rarr;</a>
-        </div>
-      </div>
 
-      <div class="ws-card t-swi reveal d2">
-        <div class="ws-top">
-          <span class="ws-badge">Active Platform</span>
+        <div class="ws-card t-pul reveal d2">
+          <div class="ws-top">
+            <span class="ws-badge">Operational</span>
+          </div>
+          <div class="ws-body">
+            <h3 class="ws-title">Pulse OS ZM</h3>
+            <div class="ws-tag">Civic Feedback</div>
+            <p class="ws-desc">Public system engineered for recording regional community updates and tracking local responses.</p>
+          </div>
+          <div class="ws-foot">
+            <a href="https://vyetasolutions.github.io/pulse-os-zm/" target="_blank" class="ws-btn">Open System &rarr;</a>
+          </div>
         </div>
-        <div class="ws-body">
-          <h3 class="ws-title">swifTrade</h3>
-          <div class="ws-tag">B2B Marketplace</div>
-          <p class="ws-desc">Direct request-matching network built to link verified commercial buyers with bulk product suppliers.</p>
-        </div>
-        <div class="ws-foot">
-          <a href="https://vyetasolutions.github.io/Swiftrade-newv/" target="_blank" class="ws-btn">Open Platform &rarr;</a>
-        </div>
-      </div>
 
-      <div class="ws-card t-wha reveal d3">
-        <div class="ws-top">
-          <span class="ws-badge">Trending</span>
+        <div class="ws-card t-swi reveal d1">
+          <div class="ws-top">
+            <span class="ws-badge">Active Platform</span>
+          </div>
+          <div class="ws-body">
+            <h3 class="ws-title">swifTrade</h3>
+            <div class="ws-tag">B2B Marketplace</div>
+            <p class="ws-desc">Direct request-matching network built to link verified commercial buyers with bulk product suppliers.</p>
+          </div>
+          <div class="ws-foot">
+            <a href="https://vyetasolutions.github.io/Swiftrade-newv/" target="_blank" class="ws-btn">Open Platform &rarr;</a>
+          </div>
         </div>
-        <div class="ws-body">
-          <h3 class="ws-title">WhatsHappenin ZM</h3>
-          <div class="ws-tag">Zambian Events & Experiences</div>
-          <p class="ws-desc">Designed to help discover events, activities, promotions, entertainment, and experiences happening around Zambia.</p>
-        </div>
-        <div class="ws-foot">
-          <a href="https://vyetasolutions.github.io/WhatsHappenin-ZM/" target="_blank" class="ws-btn">Explore Events &rarr;</a>
-        </div>
-      </div>
 
+        <div class="eco-subhead reveal d1">
+          <div class="kicker">Lifestyle & Entertainment</div>
+          <h3 class="sec-h" style="font-size: 1.8rem;">Discover Zambia</h3>
+        </div>
+
+        <div class="ws-card t-wha reveal d2">
+          <div class="ws-top">
+            <span class="ws-badge">Trending</span>
+          </div>
+          <div class="ws-body">
+            <h3 class="ws-title">WhatsHappenin ZM</h3>
+            <div class="ws-tag">Zambian Events & Experiences</div>
+            <p class="ws-desc">Designed to help discover events, activities, promotions, entertainment, and experiences happening around Zambia.</p>
+          </div>
+          <div class="ws-foot">
+            <a href="https://vyetasolutions.github.io/WhatsHappenin-ZM/" target="_blank" class="ws-btn">Explore Events &rarr;</a>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 </section>
@@ -783,11 +807,11 @@ footer{border-top:1px solid var(--bd);padding:40px 28px;text-align:center;color:
 
 <script>
 /* ═══════════════════════════════════════════════
-   1. STARFIELD CANVAS — Hardware Accelerated
+   1. STARFIELD CANVAS — Hardware Accelerated + Twinkling
 ═══════════════════════════════════════════════ */
 (function initStarfield(){
   const cv  = document.getElementById('starCanvas');
-  const ctx = cv.getContext('2d', { alpha: false }); // Opt: No alpha background
+  const ctx = cv.getContext('2d', { alpha: false }); 
   const reduced = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   let W, H, stars, shooters, nextShot, rafId;
 
@@ -822,11 +846,16 @@ footer{border-top:1px solid var(--bd);padding:40px 28px;text-align:center;color:
   const TINTS=['255,255,255','210,220,255','230,215,255','190,235,255'];
   
   function mkStar(){
+    const isTwinkler = Math.random() > 0.5; // Half are static space dust, half twinkle
     return {
-      x: Math.random() * W, y: Math.random() * H,
-      r: Math.random() * 1.2 + 0.2, base: Math.random() * 0.6 + 0.2,
-      ph: Math.random() * Math.PI * 2, sp: Math.random() * 0.02 + 0.005,
-      col: TINTS[Math.floor(Math.random() * TINTS.length)]
+      x: Math.random() * W, 
+      y: Math.random() * H,
+      r: isTwinkler ? (Math.random() * 1.2 + 0.4) : (Math.random() * 0.7 + 0.1),
+      base: Math.random() * 0.5 + 0.3,
+      ph: Math.random() * Math.PI * 2, 
+      sp: isTwinkler ? (Math.random() * 0.04 + 0.01) : 0, 
+      col: TINTS[Math.floor(Math.random() * TINTS.length)],
+      isTwinkler: isTwinkler
     }
   }
   
@@ -843,19 +872,26 @@ footer{border-top:1px solid var(--bd);padding:40px 28px;text-align:center;color:
 
   function init(){
     W = cv.width = window.innerWidth; H = cv.height = window.innerHeight;
-    stars = Array.from({length: Math.min(250, Math.round(W*H/5000))}, mkStar);
+    stars = Array.from({length: Math.min(300, Math.round(W*H/4500))}, mkStar);
     shooters = []; nextShot = Date.now() + 1500 + Math.random() * 2000;
   }
 
   function frame(){
-    ctx.fillStyle = '#02020b'; // Solid background clear
+    ctx.fillStyle = '#02020b'; 
     ctx.fillRect(0, 0, W, H);
     
     for(const s of stars){
-      s.ph += s.sp;
-      const a = s.base * (0.5 + 0.5 * Math.sin(s.ph));
-      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(${s.col},${a.toFixed(3)})`; ctx.fill();
+      if(s.isTwinkler) {
+        s.ph += s.sp;
+        // Sharp twinkle math: raises sine wave to power of 4 for sharp flashes
+        const twinkle = Math.pow(Math.sin(s.ph), 4);
+        const a = s.base * (0.3 + 0.7 * twinkle);
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(${s.col},${a.toFixed(3)})`; ctx.fill();
+      } else {
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(${s.col},${(s.base * 0.6).toFixed(3)})`; ctx.fill();
+      }
     }
     
     if(Date.now() > nextShot && shooters.length < 2){
@@ -902,19 +938,24 @@ window.addEventListener('scroll', ()=>{
     requestAnimationFrame(()=>{
       const s = window.pageYOffset;
       const maxS = Math.max(1, document.body.scrollHeight - window.innerHeight);
+      
+      /* New deep space parallax effect */
+      document.getElementById('starCanvas').style.transform = `translateY(${s*0.15}px) translateZ(0)`;
       document.getElementById('bgGrid').style.transform = `rotateX(72deg) translateY(${s*0.28}px) translateZ(0)`;
       document.getElementById('orb1').style.transform   = `translateY(${s*0.18}px) translateZ(0)`;
       document.getElementById('orb2').style.transform   = `translateY(${s*-0.12}px) translateZ(0)`;
       document.getElementById('orb3').style.transform   = `translateY(${s*0.07}px) translateZ(0)`;
+      
       if(window._applyPalette) window._applyPalette(Math.min(1, s/maxS));
       rafPending = false;
     });
   }
 },{passive: true});
 
+/* Optimized Observer - Fires faster as elements scroll into view */
 const revIO = new IntersectionObserver(entries => {
   entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); revIO.unobserve(e.target); } });
-}, {threshold: 0.1, rootMargin: '0px 0px -40px 0px'});
+}, {threshold: 0.05, rootMargin: '0px 0px -10px 0px'});
 document.querySelectorAll('.reveal').forEach(el => revIO.observe(el));
 
 /* ═══════════════════════════════════════════════
